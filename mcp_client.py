@@ -1,33 +1,47 @@
+import sys
+from pathlib import Path
 import asyncio
 
 from langchain_mcp_adapters.client import MultiServerMCPClient
-
 from config import settings
+
+BASE_DIR = Path(__file__).resolve().parent
+python_exe = sys.executable
+
+aviation_dir = BASE_DIR / "aviationstack-mcp"
+aviation_python = aviation_dir / ".venv" / "Scripts" / "python.exe"
+if not aviation_python.exists():
+    aviation_python = aviation_dir / ".venv" / "bin" / "python"
+if not aviation_python.exists():
+    aviation_python = Path(python_exe)
+
+openweather_script = BASE_DIR / "mcp_servers" / "openweather_mcp_server.py"
 
 client = MultiServerMCPClient(
     {
-        'tavily':{
-               'transport':'streamable_http',
-               'url': f'https://mcp.tavily.com/mcp/?tavilyApiKey={settings.TAVILY_API_KEY}'
+        'tavily': {
+            'transport': 'streamable_http',
+            'url': f'https://mcp.tavily.com/mcp/?tavilyApiKey={settings.TAVILY_API_KEY}'
         },
-        'aviationstack':{
-            'transport':'stdio',
-            'command':r"D:\Multi_agent_with_MCP\aviationstack-mcp\.venv\Scripts\python.exe",
-            'args':[
+        'aviationstack': {
+            'transport': 'stdio',
+            'command': str(aviation_python),
+            'args': [
                 '-m',
                 'aviationstack_mcp',
             ],
-            'cwd': r"D:\Multi_agent_with_MCP\aviationstack-mcp",
-            'env':{
-                'AVIATION_STACK_API_KEY':settings.AVIATIONSTACK_API_KEY
+            'cwd': str(aviation_dir),
+            'env': {
+                'AVIATION_STACK_API_KEY': settings.AVIATIONSTACK_API_KEY
             }
         },
-        'weather':{
-            'transport':'stdio',
-            'command':r"D:\Multi_agent_with_MCP\.venv\Scripts\python.exe",
-            'args':[r"D:\Multi_agent_with_MCP\openweather_mcp_server.py"],
-            'env':{
-                'OPENWEATHER_API_KEY':settings.OPENWEATHER_API_KEY
+        'weather': {
+            'transport': 'stdio',
+            'command': str(python_exe),
+            'args': [str(openweather_script)],
+            'cwd': str(BASE_DIR),
+            'env': {
+                'OPENWEATHER_API_KEY': settings.OPENWEATHER_API_KEY
             }
         }
     }
@@ -150,7 +164,7 @@ async def aviation_get_airport_code(city_or_name: str) -> str | None:
 
     # 2. Fallback: local static airport codes
     try:
-        from airport_helper import get_airport_code
+        from utils.airport_helper import get_airport_code
         return get_airport_code(city_or_name)
     except Exception:
         return None

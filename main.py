@@ -22,17 +22,12 @@ from langchain_groq import ChatGroq
 
 from mcp_client import tavily_mcp_search, aviation_flight_search,current_weather_mcp_search,forecast_weather_mcp_search
 
-from config import settings
-from airport_helper import get_airport_code
-from travel_schema import TravelDetails
-from travel_parser import extract_travel_details
+from config import settings, get_llm
+from utils.airport_helper import get_airport_code
+from utils.travel_schema import TravelDetails
+from utils.travel_parser import extract_travel_details
 
-llm = ChatGoogleGenerativeAI(
-    model="google/gemini-3-pro-preview",
-    api_key=settings.GEMINI_API_KEY,
-    # max_tokens=700,
-    # max_retries=0,
-)
+llm = get_llm()
 
 
 def invoke_llm(messages):

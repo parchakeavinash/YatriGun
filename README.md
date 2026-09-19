@@ -76,19 +76,30 @@ Multi_agent_with_MCP/
 ├── state.py                  # LangGraph TravelState schema definition
 ├── graph.py                  # LangGraph state machine, routing, and compilation
 ├── agent.py                  # Agent definitions (Supervisor, Flight, Hotel, Weather, Budget, Itinerary, HITL, Final)
-├── mcp_client.py             # MultiServerMCPClient management (Tavily, Aviationstack, OpenWeather)
+├── mcp_client.py             # Unified MultiServerMCPClient management (Tavily, Aviationstack, OpenWeather)
 │
 ├── app.py                    # Streamlit interactive UI application
 ├── main.py                   # Terminal / CLI interactive execution script
 │
-├── openweather_mcp_server.py # Standalone stdio MCP server for OpenWeather
-├── aviationstack-mcp/        # Local stdio MCP server module for Aviationstack
-├── airport_codes.py          # Static IATA fallback codes
-├── airport_helper.py         # Airport resolution helpers
-├── flight_schema.py          # Flight query schemas
-├── flight_service.py         # Aviation service utility
-├── travel_schema.py          # Travel data schemas
-└── travel_parser.py          # Query parsing utilities
+├── mcp_servers/              # Standalone local MCP servers
+│   └── openweather_mcp_server.py # Standalone stdio MCP server for OpenWeather
+│
+├── aviationstack-mcp/        # Local stdio MCP server package for Aviationstack
+│
+├── utils/                    # Travel helpers, airport codes & schemas
+│   ├── __init__.py
+│   ├── airport_codes.py      # Static IATA fallback codes
+│   ├── airport_helper.py     # Airport resolution helpers
+│   ├── flight_schema.py      # Flight query schemas
+│   ├── flight_service.py     # Aviation service utility
+│   ├── travel_parser.py      # Query parsing utilities
+│   ├── travel_schema.py      # Travel data schemas
+│   └── tools/                # Internal tool helpers
+│
+└── tests/                    # Verification & diagnostic tests
+    ├── __init__.py
+    ├── test_aviation_stack_mcp.py  # Aviationstack MCP verification test
+    └── testing_openweather_mcp.py  # OpenWeather MCP verification test
 ```
 
 ---
